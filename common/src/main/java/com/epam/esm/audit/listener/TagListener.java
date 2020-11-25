@@ -4,7 +4,6 @@ import com.epam.esm.audit.AuditAction;
 import com.epam.esm.audit.entity.TagHistory;
 import com.epam.esm.model.Tag;
 import javax.persistence.*;
-
 import static com.epam.esm.audit.AuditAction.*;
 
 public class TagListener {

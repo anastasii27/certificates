@@ -1,4 +1,4 @@
-package com.epam.esm.converter;
+package com.epam.esm.utils;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import javax.persistence.AttributeConverter;

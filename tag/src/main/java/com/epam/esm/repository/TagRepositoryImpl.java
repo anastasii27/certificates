@@ -17,8 +17,8 @@ public class TagRepositoryImpl implements TagRepository {
     private static final String CERTIFICATE_TAGS = "SELECT `id`, `name` FROM `gift-certificates`.`tag_m2m_gift_certificate`\n" +
             "JOIN tag ON `tag_m2m_gift_certificate`.`tagId` = tag.id\n" +
             "WHERE `giftCertificateId`=?;";
-   @PersistenceContext
-   private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public List<Tag> createAll(List<Tag> tags) {

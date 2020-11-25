@@ -63,8 +63,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     private long createOrder(Order order){
-       entityManager.persist(order);
-       return order.getId();
+        entityManager.persist(order);
+        return order.getId();
     }
 
     private void addCertificatesToOrder(List<Certificate> certificates, long orderId){

@@ -4,6 +4,8 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.model.Pagination;
 import com.epam.esm.dto.UserTagDto;
+import com.epam.esm.model.User;
+
 import java.util.List;
 
 public interface UserService {
@@ -32,4 +34,5 @@ public interface UserService {
      * @return List of tags or empty List if no tags were found.
      */
     List<UserTagDto> findUserTags(String searchType, String category);
+    UserDto create(UserDto user);
 }

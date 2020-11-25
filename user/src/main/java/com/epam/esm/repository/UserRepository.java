@@ -30,4 +30,13 @@ public interface UserRepository {
      * @return List of users or empty List if users do not exist.
      */
     List<User> findAll(String category);
+    /**
+     * This method is used to return a user by login from database.
+     *
+     * @param login the login of a user to return.
+     * @return an Optional with the value of User or empty Optional
+     *          if User does not exist.
+     */
+    Optional<User> findByLogin(String login);
+    Optional<User> create(User user);
 }

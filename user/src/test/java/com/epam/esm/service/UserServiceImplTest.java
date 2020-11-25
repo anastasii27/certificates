@@ -5,6 +5,7 @@ import com.epam.esm.converter.UserConverter;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.model.Pagination;
+import com.epam.esm.model.Role;
 import com.epam.esm.model.User;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.when;
 @SpringJUnitConfig(SpringConfig.class)
 @SpringBootTest
 @EnableAutoConfiguration
-class UserServiceImplTest {
+class UserServiceImplTest {//todo fix
     private static final String ILLEGAL_SEARCH_TYPE = "smth";
     private static final String CATEGORY = "user_orders_cost_max";
     @Mock
@@ -51,8 +52,8 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         pagination = new Pagination(100, 0);
-        user = new User(1, "Nastya",null);
-        userDto = new UserDto(1, "Nastya");
+        user = new User(1, "Nastya","login", "123", Role.USER, null);
+        userDto = new UserDto(1, "Nastya", "login", "12345", Role.USER);
         usersList = Collections.singletonList(user);
         usersDtoList = Collections.singletonList(userDto);
     }

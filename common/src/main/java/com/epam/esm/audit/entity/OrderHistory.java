@@ -1,7 +1,7 @@
 package com.epam.esm.audit.entity;
 
 import com.epam.esm.audit.AuditAction;
-import com.epam.esm.converter.ZoneIdConverter;
+import com.epam.esm.utils.ZoneIdConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

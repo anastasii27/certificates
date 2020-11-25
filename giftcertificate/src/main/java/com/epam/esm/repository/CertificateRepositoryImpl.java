@@ -20,7 +20,8 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public List<Certificate> findAll(Pagination pagination) {
-        return entityManager.createQuery(ALL_CERTIFICATES, Certificate.class)
+        return entityManager
+                .createQuery(ALL_CERTIFICATES, Certificate.class)
                 .setFirstResult(pagination.getOffset())
                 .setMaxResults(pagination.getLimit())
                 .getResultList();
@@ -50,7 +51,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     @Override
     public Optional<Certificate> update(Certificate certificate) {
         return Optional.ofNullable(
-               entityManager.merge(certificate)
+                entityManager.merge(certificate)
         );
     }
 

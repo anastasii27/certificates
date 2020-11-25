@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.converter.UserConverter;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.model.User;
@@ -13,6 +14,7 @@ import com.epam.esm.model.Pagination;
 import com.epam.esm.dto.UserTagDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +22,11 @@ import java.util.List;
 @Service("userService")
 public class UserServiceImpl implements UserService {
     private static final long ERROR_CODE_NOT_FOUND = 40403;
+    private static final long ERROR_CODE_CONFLICT = 40903;
     private static final String NOT_FOUND_EXCEPTION_KEY = "exception.user.not_found";
-    private static final String MOST_USED = "most_used";
+    private static final String CONFLICT_EXCEPTION_KEY = "exception.user.conflict";
     private static final String ILLEGAL_SEARCH_TYPE_KEY = "exception.illegal_search_type";
+    private static final String MOST_USED = "most_used";
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -52,6 +56,17 @@ public class UserServiceImpl implements UserService {
             return getMostUsedUserTags(category);
         }
         throw new IllegalArgumentException(ILLEGAL_SEARCH_TYPE_KEY);
+    }
+
+    @Override
+    @Transactional
+    public UserDto create(UserDto userDto) {
+        if(userRepository.findByLogin(userDto.getLogin()).isPresent()) {
+            throw new EntityAlreadyExistsException(CONFLICT_EXCEPTION_KEY, ERROR_CODE_CONFLICT);
+        }
+        User user = userRepository.create(userConverter.toEntity(userDto)).orElse(new User());
+
+        return userConverter.toDto(user);
     }
 
     private List<UserTagDto> getMostUsedUserTags(String userCategory){

@@ -1,7 +1,7 @@
 package com.epam.esm.model;
 
 import com.epam.esm.audit.listener.OrderListener;
-import com.epam.esm.converter.ZoneIdConverter;
+import com.epam.esm.utils.ZoneIdConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

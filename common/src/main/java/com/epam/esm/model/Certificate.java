@@ -1,6 +1,6 @@
 package com.epam.esm.model;
 
-import com.epam.esm.converter.ZoneIdConverter;
+import com.epam.esm.utils.ZoneIdConverter;
 import com.epam.esm.audit.listener.CertificateListener;
 import lombok.*;
 import javax.persistence.*;

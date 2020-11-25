@@ -1,6 +1,7 @@
 package com.epam.esm.audit.entity;
 
 import com.epam.esm.audit.AuditAction;
+import com.epam.esm.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "orders_aud")
+@Table(name = "users_aud")
 public class UserHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +20,8 @@ public class UserHistory {
     @Enumerated(EnumType.STRING)
     private AuditAction operation;
     private String name;
+    private String login;
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

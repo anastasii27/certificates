@@ -18,7 +18,6 @@ public class SpringConfig implements WebMvcConfigurer {
         return new ModelMapper();
     }
 
-    @Bean
     @Profile("test")
     public ObjectMapper objectMapper(){
         return new ObjectMapper();

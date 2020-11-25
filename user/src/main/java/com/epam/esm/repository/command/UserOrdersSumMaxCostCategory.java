@@ -5,8 +5,9 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public class UserOrdersSumMaxCostCategory implements UserCategoryCommand {
-    private static final String USERS_WITH_THE_HIGHEST_COST_OF_ALL_ORDERS  = "SELECT t.userId AS `id`, t.`name` FROM (\n" +
-            "\tSELECT userId, `name`, sum(cost) AS totalCost FROM `gift-certificates`.orders\n" +
+    private static final String USERS_WITH_THE_HIGHEST_COST_OF_ALL_ORDERS  = "SELECT t.userId AS `id`, t.`name`, t.login, " +
+            "t.`password`, t.role FROM (\n" +
+            "\tSELECT userId, `name`, login, `password`, role, sum(cost) AS totalCost FROM `gift-certificates`.orders\n" +
             "\tJOIN `gift-certificates`.users ON userId = `gift-certificates`.users.id\n" +
             "\tGROUP BY userId) t \n" +
             "WHERE t.totalCost = (\n" +

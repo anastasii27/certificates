@@ -1,7 +1,7 @@
 package com.epam.esm.audit.listener;
 
 import com.epam.esm.audit.AuditAction;
-import com.epam.esm.audit.entity.TagHistory;
+import com.epam.esm.audit.entity.UserHistory;
 import com.epam.esm.model.User;
 import javax.persistence.*;
 import static com.epam.esm.audit.AuditAction.*;
@@ -26,6 +26,7 @@ public class UserListener {
     }
 
     private void insertIntoAuditTable(AuditAction action, User user){
-        entityManager.persist(new TagHistory(0, user.getId(), action, user.getName()));
+        entityManager.persist(new UserHistory(0, user.getId(), action, user.getName(),
+                user.getLogin(), user.getPassword(), user.getRole()));
     }
 }
