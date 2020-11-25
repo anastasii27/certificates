@@ -10,25 +10,24 @@ import java.util.StringJoiner;
 
 @Component
 public class SelectFilteredQuery {
-     private static final String BASE_QUERY = "SELECT c FROM Certificate c LEFT JOIN c.tags t ";
+     private static final String BASE_QUERY = "SELECT DISTINCT c FROM Certificate c JOIN c.tags t ";
      private static final String ADDITIONAL_QUERY1 = " t.name in (";
-     private static final String ADDITIONAL_QUERY2 = ") GROUP BY c HAVING count(c)=";
+     private static final String ADDITIONAL_QUERY2 = ") GROUP BY c HAVING count(t)=";
      private static final String WHERE = " WHERE ";
-     private static final String LIKE = " LIKE '%";
-     private static final String END_OF_LIKE = "%' ";
+     private static final String LIKE = " LIKE ";
      private static final String ORDER_BY = " ORDER BY ";
      private static final String SPACE = " ";
      private static final String AND = " AND ";
-     private static final String QUOTE = "'";
      private static final String COMMA = ",";
+     private static final String COLON = ":";
      private final List<String> illegalSearchParam = Arrays.asList(DIRECTION.name().toLowerCase(),
              FIELD.name().toLowerCase(), TAG.name().toLowerCase());
 
      public String createQuery(Map<String, String> filterParam){
         StringBuilder sqlBuilder = new StringBuilder(BASE_QUERY);
-        String searchQuery = searchingParamsIntoHqlQuery(filterParam);
-        String sortQuery = sortingParamsIntoHqlQuery(filterParam);
-        String tagsQuery = tagParamsIntoHqlQuery(filterParam);
+        String searchQuery = searchingParamsIntoQuery(filterParam);
+        String sortQuery = sortingParamsIntoQuery(filterParam);
+        String tagsQuery = tagParamsIntoQuery(filterParam);
 
         if(!searchQuery.trim().isEmpty()){
             sqlBuilder.append(WHERE).append(searchQuery);
@@ -39,18 +38,17 @@ public class SelectFilteredQuery {
         }else if(searchQuery.trim().isEmpty() & !tagsQuery.trim().isEmpty()){
             sqlBuilder.append(WHERE).append(tagsQuery);
         }
-
         sqlBuilder.append(sortQuery);
 
         return sqlBuilder.toString();
      }
 
-     private String tagParamsIntoHqlQuery(Map<String, String> filterParam){
+     private String tagParamsIntoQuery(Map<String, String> filterParam){
          StringJoiner joiner = new StringJoiner(COMMA);
 
          filterParam.entrySet().stream()
                  .filter(e -> e.getKey().contains(TAG.name().toLowerCase()))
-                 .forEach(e -> joiner.add(QUOTE + e.getValue()+ QUOTE));
+                 .forEach(e -> joiner.add(COLON + e.getKey()) );
 
          if(joiner.length() != 0){
             return ADDITIONAL_QUERY1 + joiner.toString() + ADDITIONAL_QUERY2 + countTags(filterParam);
@@ -68,12 +66,12 @@ public class SelectFilteredQuery {
          return i;
      }
 
-     private String searchingParamsIntoHqlQuery(Map<String, String> filterParam){
+     private String searchingParamsIntoQuery(Map<String, String> filterParam){
         StringJoiner joiner = new StringJoiner(AND);
         filterParam.entrySet().stream()
                 .filter(e -> illegalSearchParam.stream().noneMatch(s-> e.getKey().contains(s)))
                 .forEach(e ->{
-                        String value = e.getValue();
+                        String value = COLON + e.getKey();
                         String correctKey = getCorrectQueryParamName(e.getKey());
 
                         joiner.add(getWhereConditionForSearchParam(value, correctKey));
@@ -82,7 +80,7 @@ public class SelectFilteredQuery {
         return joiner.toString();
     }
 
-    private String sortingParamsIntoHqlQuery(Map<String, String> filterParam){
+    private String sortingParamsIntoQuery(Map<String, String> filterParam){
         StringBuilder query = new StringBuilder();
         String sortDirection = filterParam.get(DIRECTION.getParam());
         String sortField = filterParam.get(FIELD.getParam());
@@ -106,7 +104,6 @@ public class SelectFilteredQuery {
     private String getWhereConditionForSearchParam(String value, String paramName){
         return new StringBuilder().append(valueOf(paramName.toUpperCase()).getParam())
                 .append(LIKE)
-                .append(value)
-                .append(END_OF_LIKE).toString();
+                .append(value).toString();
     }
 }

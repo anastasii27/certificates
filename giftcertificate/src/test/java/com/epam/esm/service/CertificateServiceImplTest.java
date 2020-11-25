@@ -10,7 +10,7 @@ import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Pagination;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.CertificateRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.epam.esm.service.utils.UpdatedCertificate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.powermock.api.mockito.PowerMockito;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -37,10 +36,10 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @ExtendWith(MockitoExtension.class)
 @SpringJUnitConfig(SpringConfig.class)
 @SpringBootTest
-@EnableConfigurationProperties
+@EnableAutoConfiguration
 @ActiveProfiles("test")
 class CertificateServiceImplTest {
-    @MockBean
+    @Mock
     private CertificateRepository certificateRepository;
     @Mock
     private TagService tagService;
@@ -110,12 +109,11 @@ class CertificateServiceImplTest {
     void create_whenCertificateDoesNotExist_thenReturnCreatedCertificate() throws Exception {
         certificateDto.setTags(Collections.emptyList());
         certificate.setTags(Collections.emptySet());
-        when(certificateRepository.create(certificate)).thenReturn(Optional.of(certificate));
         when(certificateRepository.getCertificate(certificate.getName(), certificate.getDescription()))
                 .thenReturn(Optional.empty());
+        when(certificateRepository.create(certificate)).thenReturn(Optional.of(certificate));
         PowerMockito.doNothing()
                 .when(tagService, "addTagsToCertificate", certificateDto.getTags(), certificateDto.getId());
-        when(certificateRepository.findById(certificateDto.getId())).thenReturn(Optional.of(certificate));
 
         assertEquals(certificateDto, certificateService.create(certificateDto));
     }

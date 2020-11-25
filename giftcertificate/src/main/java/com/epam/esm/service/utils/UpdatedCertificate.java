@@ -1,4 +1,4 @@
-package com.epam.esm.service;
+package com.epam.esm.service.utils;
 
 import com.epam.esm.dto.CertificateDto;
 import com.fasterxml.jackson.databind.ObjectMapper;

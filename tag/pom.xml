@@ -11,5 +11,11 @@
 
     <artifactId>tag</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.epam.esm</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

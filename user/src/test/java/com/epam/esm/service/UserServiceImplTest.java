@@ -9,30 +9,26 @@ import com.epam.esm.model.User;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @SpringJUnitConfig(SpringConfig.class)
 @SpringBootTest
-@EnableConfigurationProperties
-@ActiveProfiles("test")
+@EnableAutoConfiguration
 class UserServiceImplTest {
     private static final String ILLEGAL_SEARCH_TYPE = "smth";
     private static final String CATEGORY = "user_orders_cost_max";
@@ -80,12 +76,12 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findUserTags_whenSearchTypeIsNull_thenReturnEmptyList() {
-        assertIterableEquals(Collections.emptyList(), userService.findUserTags(null, CATEGORY));
+    void findUserTags_whenSearchTypeIsNull_thenIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, ()-> userService.findUserTags(null, CATEGORY));
     }
 
     @Test
-    void findUserTags_whenSearchTypeIsIllegal_thenReturnEmptyList() {
-        assertIterableEquals(Collections.emptyList(), userService.findUserTags(ILLEGAL_SEARCH_TYPE, CATEGORY));
+    void findUserTags_whenSearchTypeIsIllegal_thenIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, ()-> userService.findUserTags(ILLEGAL_SEARCH_TYPE, CATEGORY));
     }
 }

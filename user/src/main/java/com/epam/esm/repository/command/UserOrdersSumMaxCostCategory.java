@@ -1,7 +1,7 @@
 package com.epam.esm.repository.command;
 
 import com.epam.esm.model.User;
-import org.hibernate.SessionFactory;
+import javax.persistence.EntityManager;
 import java.util.List;
 
 public class UserOrdersSumMaxCostCategory implements UserCategoryCommand {
@@ -14,10 +14,9 @@ public class UserOrdersSumMaxCostCategory implements UserCategoryCommand {
             "\tGROUP BY userId) t1)";
 
     @Override
-    public List<User> getUsers(SessionFactory sessionFactory) {
-        return sessionFactory
-                .getCurrentSession()
+    public List<User> getUsers(EntityManager entityManager) {
+        return entityManager
                 .createNativeQuery(USERS_WITH_THE_HIGHEST_COST_OF_ALL_ORDERS, User.class)
-                .list();
+                .getResultList();
     }
 }

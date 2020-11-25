@@ -2,11 +2,11 @@
 -- -----------------------------------------------------
 -- Schema gift-certificates
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `gift-certificates`;
+CREATE SCHEMA IF NOT EXISTS test;
 -- -----------------------------------------------------
--- Table `gift-certificates`.`gift-certificate`
+-- Table test.`gift-certificate`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS  `gift-certificates`.`certificates`(
+CREATE TABLE IF NOT EXISTS  test.certificates(
     `id` INT(11) AUTO_INCREMENT NOT NULL PRIMARY KEY ,
     `name` VARCHAR(45) NOT NULL,
     `description` VARCHAR(45) NOT NULL,
@@ -19,21 +19,21 @@ CREATE TABLE IF NOT EXISTS  `gift-certificates`.`certificates`(
                                                                   );
 
 -- -----------------------------------------------------
--- Table `gift-certificates`.`tag`
+-- Table test.`tag`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS  `gift-certificates`.`tags`(
+CREATE TABLE IF NOT EXISTS  test.tag(
     `id` INT(11) AUTO_INCREMENT NOT NULL PRIMARY KEY ,
     `name` VARCHAR(45) NOT NULL
                                                      );
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS  `gift-certificates`.`tag_m2m_gift_certificate` (
+CREATE TABLE IF NOT EXISTS  test.tag_m2m_gift_certificate (
     `tagId` INT(11) NOT NULL,
     `giftCertificateId` INT(11) NOT NULL,
 
-     FOREIGN KEY (`giftCertificateId`) REFERENCES  `gift-certificates`.`certificates` (`id`) ON DELETE CASCADE,
-     FOREIGN KEY (`tagId`) REFERENCES  `gift-certificates`.`tags` (`id`) ON DELETE CASCADE
+     FOREIGN KEY (`giftCertificateId`) REFERENCES  test.certificates (`id`) ON DELETE CASCADE,
+     FOREIGN KEY (`tagId`) REFERENCES  test.tag(`id`) ON DELETE CASCADE
                                                                           );
 
 

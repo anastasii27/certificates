@@ -1,12 +1,11 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.Tag;
 import com.epam.esm.model.Pagination;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.epam.esm.model.Tag;
 import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,21 +19,20 @@ public class TagRepositoryImpl implements TagRepository {
     private static final String CERTIFICATE_TAGS = "SELECT `id`, `name` FROM `gift-certificates`.`tag_m2m_gift_certificate`\n" +
             "JOIN tag ON `tag_m2m_gift_certificate`.`tagId` = tag.id\n" +
             "WHERE `giftCertificateId`=?;";
-    @Autowired
-    private SessionFactory sessionFactory;
+   @PersistenceContext
+   private EntityManager entityManager;
 
     @Override
     public void createAll(List<Tag> tags) {
         for (Tag tag: tags) {
-            sessionFactory.getCurrentSession().save(tag);
+            entityManager.persist(tag);
         }
     }
 
     @Override
     public void addTagsToCertificate(List<Tag> tags, long certificateId) {
         for (Tag tag: tags) {
-            sessionFactory.getCurrentSession()
-                    .createNativeQuery(ADD_TAGS_TO_CERTIFICATE)
+            entityManager.createNativeQuery(ADD_TAGS_TO_CERTIFICATE)
                     .setParameter(1, tag.getName())
                     .setParameter(2, certificateId)
                     .executeUpdate();
@@ -44,8 +42,7 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public void deleteCertificateTags(List<Tag> tags, long certificateId) {
         for (Tag tag: tags) {
-            sessionFactory.getCurrentSession()
-                    .createNativeQuery(DELETE_GIFT_CERTIFICATE_TAGS)
+            entityManager.createNativeQuery(DELETE_GIFT_CERTIFICATE_TAGS)
                     .setParameter(1, certificateId)
                     .setParameter(2, tag.getName())
                     .executeUpdate();
@@ -54,50 +51,44 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public List<Tag> getCertificateTags(long certificateId) {
-        return sessionFactory.getCurrentSession()
-                .createNativeQuery(CERTIFICATE_TAGS, Tag.class)
+        return entityManager.createNativeQuery(CERTIFICATE_TAGS, Tag.class)
                 .setParameter(1,certificateId)
-                .list();
+                .getResultList();
     }
 
     @Override
     public Optional<Tag> findById(long id) {
         return Optional.ofNullable(
-                sessionFactory.getCurrentSession().find(Tag.class, id)
+                entityManager.find(Tag.class, id)
         );
     }
 
     @Override
     public List<Tag> findAll(Pagination pagination) {
-        return sessionFactory.getCurrentSession()
-                .createQuery(TAGS_LIST, Tag.class)
+        return entityManager.createQuery(TAGS_LIST, Tag.class)
                 .setFirstResult(pagination.getOffset())
                 .setMaxResults(pagination.getLimit())
-                .list();
+                .getResultList();
     }
 
     @Override
     public Optional<Tag> create(Tag tag) {
-        long id = (Long) sessionFactory
-                .getCurrentSession()
-                .save(tag);
-        return findById(id);
+        entityManager.persist(tag);
+        return findById(tag.getId());
     }
 
     @Override
     public void delete(long id) {
-        Session session = sessionFactory.getCurrentSession();
-
-        Tag tag = session.get(Tag.class, id);
-        session.delete(tag);
+        Tag tag = entityManager.find(Tag.class, id);
+        entityManager.remove(tag);
     }
 
     @Override
     public List<Tag> getMostUsedTags(List<Certificate> certificates) {
         SelectMostUsedTagsQuery mostUsedTagsQuery = new SelectMostUsedTagsQuery();
-        return sessionFactory.getCurrentSession()
+        return entityManager
                 .createNativeQuery(mostUsedTagsQuery.createQuery(certificates), Tag.class)
-                .list();
+                .getResultList();
     }
 
     @Override

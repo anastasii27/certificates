@@ -8,19 +8,18 @@ import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.FilterParam;
 import com.epam.esm.model.Pagination;
+import com.epam.esm.service.utils.UpdatedCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
+import static com.epam.esm.service.utils.FilterParameterUtils.*;
 
 @Service("certificateService")
 public class CertificateServiceImpl implements CertificateService {
     private static final String NOT_FOUND_EXCEPTION_KEY = "exception.certificate.not_found";
     private static final String CONFLICT_EXCEPTION_KEY = "exception.certificate.conflict";
-    private final List<String> possibleSortDirectionParams = Arrays.asList("asc", "desc");
-    private static final String DIRECTION = "direction";
     private static final long ERROR_CODE_NOT_FOUND = 40402;
     private static final long ERROR_CODE_CONFLICT = 40902;
     @Autowired
@@ -122,27 +121,13 @@ public class CertificateServiceImpl implements CertificateService {
         if(filterParams == null){
             return Collections.emptyList();
         }
+
         removeIllegalSearchParams(filterParams);
         removeIllegalSortDirectionParams(filterParams);
+        modifyParamsValuesForDatabase(filterParams);
 
         return certificateConverter.toDtoList(
                 certificateRepository.getFilteredCertificates(filterParams, pagination)
-        );
-    }
-
-    private void removeIllegalSearchParams(Map<String, String> filterParams){
-        filterParams.entrySet().removeIf(entry ->
-                FilterParam.stream().noneMatch(e-> entry.getKey().contains(e.name().toLowerCase())));
-    }
-
-    private void removeIllegalSortDirectionParams(Map<String, String> filterParams){
-        filterParams.entrySet().removeIf(entry ->
-                possibleSortDirectionParams.stream().noneMatch(s -> {
-                    if(entry.getKey().equals(DIRECTION)){
-                        return entry.getValue().equals(s);
-                    }
-                    return true;
-                })
         );
     }
 }

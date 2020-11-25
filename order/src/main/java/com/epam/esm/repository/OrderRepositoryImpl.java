@@ -1,12 +1,12 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.model.Order;
 import com.epam.esm.model.Certificate;
+import com.epam.esm.model.Order;
 import com.epam.esm.model.Pagination;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +17,12 @@ public class OrderRepositoryImpl implements OrderRepository {
     private static final String ADD_CERTIFICATE_TO_ORDER = "INSERT INTO `gift-certificates`." +
             "`orders_m2m_gift_certificate` VALUES(?,?)";
     private static final String USER_NAME = "SELECT `name` FROM `gift-certificates`.users WHERE id=?";
-    @Autowired
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager  entityManager;
 
     @Override
     public Optional<Order> getOrderInfo(long userId, long orderId) {
-        Order order =  sessionFactory.getCurrentSession()
-                .createQuery(ORDER_INFO, Order.class)
+        Order order =  entityManager.createQuery(ORDER_INFO, Order.class)
                 .setParameter(1, userId)
                 .setParameter(2, orderId)
                 .getResultList()
@@ -34,12 +33,11 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public List<Order> getUserOrders(long userId, Pagination pagination) {
-        return sessionFactory.getCurrentSession()
-                .createQuery(USER_ORDERS, Order.class)
+        return entityManager.createQuery(USER_ORDERS, Order.class)
                 .setParameter(1, userId)
                 .setFirstResult(pagination.getOffset())
                 .setMaxResults(pagination.getLimit())
-                .list();
+                .getResultList();
     }
 
     @Override
@@ -55,8 +53,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public boolean doesUserExist(long userId) {
         try {
-            String name = (String) sessionFactory.getCurrentSession()
-                    .createNativeQuery(USER_NAME)
+            String name = (String) entityManager.createNativeQuery(USER_NAME)
                     .setParameter(1, userId)
                     .getSingleResult();
         }catch (NoResultException e){
@@ -66,13 +63,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     private long createOrder(Order order){
-       return (Long) sessionFactory.getCurrentSession().save(order);
+       entityManager.persist(order);
+       return order.getId();
     }
 
     private void addCertificatesToOrder(List<Certificate> certificates, long orderId){
         for (Certificate certificate: certificates) {
-            sessionFactory.getCurrentSession()
-                    .createNativeQuery(ADD_CERTIFICATE_TO_ORDER)
+            entityManager.createNativeQuery(ADD_CERTIFICATE_TO_ORDER)
                     .setParameter(1, orderId)
                     .setParameter(2, certificate.getId())
                     .executeUpdate();

@@ -15,10 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,8 +32,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @SpringJUnitConfig(SpringConfig.class)
 @SpringBootTest
-@EnableConfigurationProperties
-@ActiveProfiles("test")
+@EnableAutoConfiguration
 class OrderServiceImplTest {
     @Mock
     private OrderRepository orderRepository;
@@ -94,7 +92,9 @@ class OrderServiceImplTest {
 
     @Test
     void getUserOrders_whenUserExists_thenReturnOrderList() {
+        when(orderRepository.doesUserExist(1)).thenReturn(true);
         when(orderRepository.getUserOrders(1, pagination)).thenReturn(orderList);
+
         assertIterableEquals(orderDtoList, orderService.getUserOrders(1, pagination));
     }
 }

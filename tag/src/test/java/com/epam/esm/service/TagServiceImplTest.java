@@ -9,13 +9,14 @@ import com.epam.esm.model.Tag;
 import com.epam.esm.repository.TagRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 @SpringJUnitConfig(SpringConfig.class)
 @SpringBootTest
-@EnableConfigurationProperties
-@ActiveProfiles("test")
+@EnableAutoConfiguration
 class TagServiceImplTest {
     private List<TagDto> dtoTags;
     private List<Tag> entityTags;
@@ -37,7 +38,7 @@ class TagServiceImplTest {
     private Tag tagEntity1;
     private Tag tagEntity2;
     private Pagination pagination;
-    @MockBean
+    @Mock
     private TagRepository tagRepository;
     @SpyBean
     private TagConverter tagConverter;
@@ -111,7 +112,7 @@ class TagServiceImplTest {
 
     @Test
     void delete_whenTagExists_thenDoNothing() {
-        when(tagRepository.findById(9)).thenReturn(Optional.ofNullable(tagEntity1));
+        when(tagRepository.findById(9)).thenReturn(Optional.ofNullable(tagEntity2));
         doNothing().when(tagRepository).delete(9);
     }
 }

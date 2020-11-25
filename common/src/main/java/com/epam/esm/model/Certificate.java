@@ -2,7 +2,6 @@ package com.epam.esm.model;
 
 import com.epam.esm.converter.ZoneIdConverter;
 import lombok.*;
-import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,8 +12,8 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Audited
 @Entity
+@EntityListeners(AuditListener.class)
 @Table(name = "certificates")
 public class Certificate {
     @Id
