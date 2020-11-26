@@ -1,6 +1,6 @@
-package com.epam.esm.model;
+package com.epam.esm.audit.entity;
 
-import com.epam.esm.audit.listener.OrderListener;
+import com.epam.esm.audit.AuditAction;
 import com.epam.esm.converter.ZoneIdConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,26 +9,22 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@EntityListeners(OrderListener.class)
-@Table(name = "orders")
-public class Order {
+@Table(name = "orders_aud")
+public class OrderHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    private long entityId;
+    @Enumerated(EnumType.STRING)
+    private AuditAction operation;
     private LocalDateTime purchaseDate;
     @Convert(converter = ZoneIdConverter.class)
     private ZoneId purchaseTimeZone;
     private BigDecimal cost;
     private long userId;
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
-    private List<Certificate> certificates;
-    @ManyToOne
-    @JoinColumn(name="userId", nullable=false, insertable = false, updatable = false)
-    private User user;
 }

@@ -97,7 +97,6 @@ public class CertificateServiceImpl implements CertificateService {
 
         Optional<Certificate> optionalUpdCertificate =
                 certificateRepository.update(certificateConverter.toEntity(modifiedCertificate));
-
         if(optionalUpdCertificate.isPresent()){
             Certificate updatedCertificate = optionalUpdCertificate.get();
             updateCertificateTags(updatedCertificate, certificateDto.getTags());

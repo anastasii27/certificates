@@ -1,8 +1,8 @@
 package com.epam.esm.model;
 
 import com.epam.esm.converter.ZoneIdConverter;
+import com.epam.esm.audit.listener.CertificateListener;
 import lombok.*;
-import org.hibernate.envers.NotAudited;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@EntityListeners(AuditListener.class)
+@EntityListeners(CertificateListener.class)
 @Table(name = "certificates")
 public class Certificate {
     @Id
@@ -33,12 +33,10 @@ public class Certificate {
     @JoinTable(name = "tag_m2m_gift_certificate",
                joinColumns = { @JoinColumn(name = "giftCertificateId")},
                inverseJoinColumns = {@JoinColumn(name = "tagId")})
-    @NotAudited
     private Set<Tag> tags;
     @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(name = "orders_m2m_gift_certificate",
             joinColumns = { @JoinColumn(name = "giftCertificateId")},
             inverseJoinColumns = {@JoinColumn(name = "ordersId")})
-    @NotAudited
     private Set<Order> orders;
 }
