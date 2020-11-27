@@ -3,6 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
+import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Pagination;
 import com.epam.esm.model.Tag;
 import java.util.List;
@@ -42,17 +43,10 @@ public interface TagService {
      * This method is used to add tag to existing certificate.
      *
      * @param tags          the List of tags for adding.
-     * @param certificateId the id of certificate.
+     * @param certificate   the certificate to update.
      * @throws EntityNotFoundException if tag does not exist.
      */
-    void addTagsToCertificate(List<TagDto> tags, long certificateId);
-    /**
-     * This method is used to update certificate`s tags.
-     *
-     * @param updatedTags   the List of certificate updated tags.
-     * @param certificateId the id of certificate.
-     */
-    void updateCertificateTags(List<TagDto> updatedTags, long certificateId);
+    void addTagsToCertificate(List<TagDto> tags, Certificate certificate);
     /**
      * This method is used to return certificate tags by
      * certificate id.

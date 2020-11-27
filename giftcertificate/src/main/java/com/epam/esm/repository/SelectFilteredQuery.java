@@ -10,7 +10,7 @@ import java.util.StringJoiner;
 
 @Component
 public class SelectFilteredQuery {
-     private static final String BASE_QUERY = "SELECT DISTINCT c FROM Certificate c JOIN c.tags t ";
+    private static final String BASE_QUERY = "SELECT DISTINCT c FROM Certificate c JOIN c.tags t ";
      private static final String ADDITIONAL_QUERY1 = " t.name in (";
      private static final String ADDITIONAL_QUERY2 = ") GROUP BY c HAVING count(t)=";
      private static final String WHERE = " WHERE ";

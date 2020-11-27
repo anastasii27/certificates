@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @SpringJUnitConfig(SpringConfig.class)
+@Sql("classpath:schema.sql")
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 class CertificateRepositoryImplTest {
@@ -38,7 +40,7 @@ class CertificateRepositoryImplTest {
                 date.toLocalDateTime(), date.getZone(), 12,
                 new HashSet<>(Collections.singletonList(new Tag(1, "velo", null))),
                 null);
-        certificate2 = new Certificate(1, "Spa Certificate", "Great spa",
+        certificate2 = new Certificate(2, "Spa Certificate", "Great spa",
                 BigDecimal.valueOf(19.99), date.toLocalDateTime(), date.getZone(),
                 date.toLocalDateTime(), date.getZone(), 22,
                 new HashSet<>(Collections.singletonList(new Tag(2, "spa", null))),
@@ -73,10 +75,9 @@ class CertificateRepositoryImplTest {
     }
 
     @Test
-    void delete_whenCertificateDoesNotExist_thenNoRowsAreRemovedFromDataBase() {
-        certificateRepository.delete(3);
+    void delete_whenCertificateDoesExists_thenDoNothing() {
+        certificateRepository.delete(2);
 
-        assertIterableEquals(certificates, certificateRepository.findAll(pagination));
     }
 
     @Test
@@ -146,19 +147,22 @@ class CertificateRepositoryImplTest {
     }
 
     @Test
-    void getCertificate_whenCertificateExists_thenId(){
-       assertEquals(certificate1, certificateRepository.getCertificate(certificate1.getName(), certificate1.getDescription()));
+    void getCertificate_whenCertificateExists_thenOptionalCertificate(){
+        System.out.println(certificateRepository.getCertificate("Bike Certificate", "Very good bikes"));
+       assertEquals(Optional.ofNullable(certificate1),
+               certificateRepository.getCertificate(certificate1.getName(), certificate1.getDescription()));
     }
 
     @Test
-    void getCertificate_whenCertificateDoesNotExist_thenZero(){
+    void getCertificate_whenCertificateDoesNotExist_thenEmptyOptional(){
         certificate1.setName("new name");
-        assertEquals(Optional.empty(), certificateRepository.getCertificate(certificate1.getName(), certificate1.getDescription()));
+        assertEquals(Optional.empty(),
+                certificateRepository.getCertificate(certificate1.getName(), certificate1.getDescription()));
     }
 
     @Test
-    void getCertificate_whenCertificateNameAndDescriptionAreNull_thenNullPointerException(){
-        assertThrows(NullPointerException.class, ()-> certificateRepository.getCertificate(null, null));
+    void getCertificate_whenCertificateNameAndDescriptionAreNull_thenEmptyOptional(){
+        assertEquals(Optional.empty(), certificateRepository.getCertificate(null, null));
     }
 }
 

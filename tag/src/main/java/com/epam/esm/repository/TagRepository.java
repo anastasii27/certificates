@@ -9,23 +9,9 @@ public interface TagRepository extends BaseRepository<Tag> {
      * This method is used to create tags in database.
      *
      * @param tags the List of tags to create.
+     * @return List of created tags.
      */
-    void createAll(List<Tag> tags);
-    /**
-     * This method is used to add tag to existing certificate
-     * in database.
-     *
-     * @param tags          the List of tags for adding.
-     * @param certificateId the id of certificate.
-     */
-    void addTagsToCertificate(List<Tag> tags, long certificateId);
-    /**
-     * This method is used to delete tag from database from existing certificate.
-     *
-     * @param tags          the List of tags for deleting.
-     * @param certificateId the id of certificate.
-     */
-    void deleteCertificateTags(List<Tag> tags, long certificateId);
+    List<Tag> createAll(List<Tag> tags);
     /**
      * This method is used to return certificate tags from database by
      * certificate id.
@@ -44,4 +30,13 @@ public interface TagRepository extends BaseRepository<Tag> {
      *         no tags were found.
      */
     List<Tag> getMostUsedTags(List<Certificate> certificates);
+    /**
+     * This method is used to find tags in database
+     * by their names.
+     *
+     * @param tags the List of tags with their names.
+     * @return List of tags or empty List if
+     *         no tags were found.
+     */
+    List<Tag> getTagsByName(List<Tag> tags);
 }

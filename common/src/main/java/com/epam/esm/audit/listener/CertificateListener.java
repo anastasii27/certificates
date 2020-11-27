@@ -3,6 +3,8 @@ package com.epam.esm.audit.listener;
 import com.epam.esm.audit.AuditAction;
 import com.epam.esm.audit.entity.CertificateHistory;
 import com.epam.esm.model.Certificate;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 import static com.epam.esm.audit.AuditAction.*;
 
@@ -11,6 +13,7 @@ public class CertificateListener {
     private EntityManager entityManager;
 
     @PostPersist
+    @Transactional
     public void postPersist(Certificate certificate){
        insertIntoAuditTable(INSERT, certificate);
     }

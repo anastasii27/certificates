@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.converter.TagConverter;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.exception.EntityAlreadyExistsException;
@@ -10,9 +11,7 @@ import com.epam.esm.model.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -70,27 +69,15 @@ public class TagServiceImpl implements TagService {
 
     @Override
     @Transactional
-    public void addTagsToCertificate(List<TagDto> tags, long certificateId) {
+    public void addTagsToCertificate(List<TagDto> tags, Certificate certificate) {
+        Set<Tag> certificateTags = new HashSet<>();
         if(!isEmpty(tags)) {
-            List<Tag> entityList = tagConverter.toEntityList(tags);
             createNonExistentTags(tagConverter.toEntityList(tags));
 
-            if (!isEmpty(tags)) {
-                tagRepository.addTagsToCertificate(entityList, certificateId);
-            }
-        }
-    }
+            List<Tag> entityList = tagConverter.toEntityList(tags);
+            certificateTags.addAll(tagRepository.getTagsByName(entityList));
 
-    @Override
-    @Transactional
-    public void updateCertificateTags(List<TagDto> updatedTags, long certificateId) {
-        if(!isEmpty(updatedTags)) {
-            List<Tag> entityList = tagConverter.toEntityList(updatedTags);
-            createNonExistentTags(entityList);
-
-            List<Tag> oldCertificateTags = tagRepository.getCertificateTags(certificateId);
-            tagRepository.deleteCertificateTags(listsDifference(oldCertificateTags, entityList), certificateId);
-            tagRepository.addTagsToCertificate(listsDifference(entityList, oldCertificateTags), certificateId);
+            certificate.setTags(certificateTags);
         }
     }
 
@@ -99,12 +86,13 @@ public class TagServiceImpl implements TagService {
         return tagRepository.getCertificateTags(certificateId);
     }
 
-    private void createNonExistentTags(List<Tag> tags){
+    private List<Tag> createNonExistentTags(List<Tag> tags){
         List<Tag> nonExistentTags = findNonExistentTags(tags);
 
         if(!isEmpty(nonExistentTags)) {
-            tagRepository.createAll(nonExistentTags);
+            return tagRepository.createAll(nonExistentTags);
         }
+        return Collections.emptyList();
     }
 
     private List<Tag> findNonExistentTags(List<Tag> tags) {

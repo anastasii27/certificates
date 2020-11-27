@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.powermock.api.mockito.PowerMockito;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -31,6 +30,7 @@ import java.util.*;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -112,8 +112,7 @@ class CertificateServiceImplTest {
         when(certificateRepository.getCertificate(certificate.getName(), certificate.getDescription()))
                 .thenReturn(Optional.empty());
         when(certificateRepository.create(certificate)).thenReturn(Optional.of(certificate));
-        PowerMockito.doNothing()
-                .when(tagService, "addTagsToCertificate", certificateDto.getTags(), certificateDto.getId());
+        doNothing().when(tagService).addTagsToCertificate(certificateDto.getTags(), certificate);
 
         assertEquals(certificateDto, certificateService.create(certificateDto));
     }
@@ -132,8 +131,7 @@ class CertificateServiceImplTest {
         when(certificateRepository.findById(1)).thenReturn(Optional.of(certificate));
         when(updatedCertificate.getUpdatedCertificate(certificateDto, certificateDto)).thenReturn(certificateDto);
         when(certificateRepository.update(certificate)).thenReturn(Optional.of(certificate));
-        PowerMockito.doNothing()
-                .when(tagService, "updateCertificateTags", certificateDto.getTags(), certificateDto.getId());
+        doNothing().when(tagService).addTagsToCertificate(certificateDto.getTags(), certificate);
 
         assertEquals(certificateDto, certificateService.update(certificateDto, 1));
     }

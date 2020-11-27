@@ -2,8 +2,6 @@ package com.epam.esm.service;
 
 import  com.epam.esm.converter.CertificateConverter;
 import com.epam.esm.dto.CertificateDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.model.Tag;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
@@ -59,28 +57,20 @@ public class CertificateServiceImpl implements CertificateService {
     public CertificateDto create(CertificateDto certificateDto) {
         certificateRepository.getCertificate(certificateDto.getName(), certificateDto.getDescription())
                 .ifPresent(c -> {
-                        throw new EntityAlreadyExistsException(CONFLICT_EXCEPTION_KEY, ERROR_CODE_CONFLICT);
-                    }
+                            throw new EntityAlreadyExistsException(CONFLICT_EXCEPTION_KEY, ERROR_CODE_CONFLICT);
+                        }
                 );
         Certificate certificate = certificateConverter.toEntity(certificateDto);
 
         Optional<Certificate> optionalCertificate = certificateRepository.create(certificate);
         if(optionalCertificate.isPresent()){
             Certificate createdCertificate = optionalCertificate.get();
-            addTagsToCertificate(createdCertificate, certificateDto.getTags());
+            tagService.addTagsToCertificate(certificateDto.getTags(), certificate);
 
             return certificateConverter.toDto(createdCertificate);
         }else {
             return new CertificateDto();
         }
-    }
-
-    private void addTagsToCertificate(Certificate certificate, List<TagDto> tags){
-        long id = certificate.getId();
-
-        tagService.addTagsToCertificate(tags, id);
-        Set<Tag> tagsSet = new HashSet<>(tagService.getCertificateTags(id));
-        certificate.setTags(tagsSet);
     }
 
     @Override
@@ -99,20 +89,12 @@ public class CertificateServiceImpl implements CertificateService {
                 certificateRepository.update(certificateConverter.toEntity(modifiedCertificate));
         if(optionalUpdCertificate.isPresent()){
             Certificate updatedCertificate = optionalUpdCertificate.get();
-            updateCertificateTags(updatedCertificate, certificateDto.getTags());
+            tagService.addTagsToCertificate(certificateDto.getTags(), updatedCertificate);
 
             return certificateConverter.toDto(updatedCertificate);
         }else {
             return new CertificateDto();
         }
-    }
-
-    private void updateCertificateTags(Certificate certificate, List<TagDto> tags){
-        long id = certificate.getId();
-
-        tagService.updateCertificateTags(tags,id);
-        Set<Tag> tagsSet = new HashSet<>(tagService.getCertificateTags(id));
-        certificate.setTags(tagsSet);
     }
 
     @Override

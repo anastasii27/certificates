@@ -30,7 +30,7 @@ public class FilterParameterUtils {
     public static void modifyParamsValuesForDatabase(Map<String, String> filterParams){
         for(Map.Entry<String, String> e : filterParams.entrySet()){
             if(!e.getKey().contains(TAG)){
-                e.setValue(PERCENT + e.getValue()+PERCENT);
+                e.setValue(PERCENT + e.getValue() + PERCENT);
             }
         }
     }

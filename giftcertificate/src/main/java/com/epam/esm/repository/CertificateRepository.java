@@ -14,7 +14,7 @@ public interface CertificateRepository extends BaseRepository<Certificate> {
      *                     have to be filtered.
      * @return List of filtered certificates.
      */
-    List getFilteredCertificates(Map<String, String> filterParams, Pagination pagination);
+    List<Certificate> getFilteredCertificates(Map<String, String> filterParams, Pagination pagination);
     /**
      * This method is used to return certificate from database
      * by its name and description.

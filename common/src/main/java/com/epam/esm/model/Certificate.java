@@ -29,12 +29,12 @@ public class Certificate {
     @Convert(converter = ZoneIdConverter.class)
     private ZoneId lastUpdateDateTimezone;
     private long duration;
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany
     @JoinTable(name = "tag_m2m_gift_certificate",
                joinColumns = { @JoinColumn(name = "giftCertificateId")},
                inverseJoinColumns = {@JoinColumn(name = "tagId")})
     private Set<Tag> tags;
-    @ManyToMany(cascade = {CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(name = "orders_m2m_gift_certificate",
             joinColumns = { @JoinColumn(name = "giftCertificateId")},
             inverseJoinColumns = {@JoinColumn(name = "ordersId")})
