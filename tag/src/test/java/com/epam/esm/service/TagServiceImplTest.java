@@ -55,8 +55,8 @@ class TagServiceImplTest {
             add(tagDto1);
             add(tagDto2);
         }};
-        tagEntity1 = new Tag(1, "velo", null);
-        tagEntity2 = new Tag(2, "spa", null);
+//        tagEntity1 = new Tag(1, "velo", null);
+//        tagEntity2 = new Tag(2, "spa", null);
         entityTags = new ArrayList<Tag>(){{
             add(tagEntity1);
             add(tagEntity2);

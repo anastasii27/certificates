@@ -76,8 +76,8 @@ class CertificateServiceImplTest {
         certificate = new Certificate(1, "Spa Certificate", "Very good spa",
                 BigDecimal.valueOf(12.3), date.toLocalDateTime(), date.getZone(),
                 date.toLocalDateTime(), date.getZone(), 12,
-                new HashSet<>(Arrays.asList(new Tag(1, "#spa", null)
-                        , new Tag(2, "#relax", null))),
+                new HashSet<>(Arrays.asList(new Tag(1, "#spa")
+                        , new Tag(2, "#relax"))),
                 null);
         dtoList = new ArrayList<CertificateDto>(){{
             add(certificateDto);

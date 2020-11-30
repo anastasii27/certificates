@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -40,13 +41,13 @@ class CertificateRepositoryImplTest {
         certificate1 = new Certificate(1, "Bike Certificate", "Very good bikes",
                 BigDecimal.valueOf(12.99), date.toLocalDateTime(), date.getZone(),
                 date.toLocalDateTime(), date.getZone(), 12,
-                new HashSet<>(Collections.singletonList(new Tag(1, "velo", null))),
-                null);
+                new HashSet<>(Collections.singletonList(new Tag(1, "velo"))),
+                Collections.emptySet());
         certificate2 = new Certificate(2, "Spa Certificate", "Great spa",
                 BigDecimal.valueOf(19.99), date.toLocalDateTime(), date.getZone(),
                 date.toLocalDateTime(), date.getZone(), 22,
-                new HashSet<>(Collections.singletonList(new Tag(2, "spa", null))),
-                null);
+                new HashSet<>(Collections.singletonList(new Tag(2, "spa"))),
+                Collections.emptySet());
         certificates = new ArrayList<Certificate>() {{
             add(certificate1);
             add(certificate2);
@@ -77,17 +78,23 @@ class CertificateRepositoryImplTest {
     }
 
     @Test
-    void delete_whenCertificateDoesExists_thenDoNothing() {
-        certificateRepository.delete(2);
-        assertIterableEquals(certificates, certificateRepository.findAll(pagination));
+    void delete_whenCertificateDoesNotExists_thenDoNothing() {
+        assertThrows(InvalidDataAccessApiUsageException.class, ()->  certificateRepository.delete(5));
     }
 
     @Test
-    void create_whenCertificateIsNotNull_thenReturnOptionalCertificate() {
-        Optional<Certificate> expected = Optional.of(certificate2);
-        certificate1.setId(3);
-        Optional<Certificate> actual = certificateRepository.create(certificate2);
-        assertEquals(expected, actual);
+    void create_whenCertificateIsTransient_thenReturnOptionalCertificate() {
+        Certificate certificate = new Certificate(0, "New certificate", "Very good bikes",
+                BigDecimal.valueOf(12.99), date.toLocalDateTime(), date.getZone(),
+                date.toLocalDateTime(), date.getZone(), 12,
+                null, Collections.emptySet());
+
+        Certificate expected = new Certificate(3, "New certificate", "Very good bikes",
+                BigDecimal.valueOf(12.99), date.toLocalDateTime(), date.getZone(),
+                date.toLocalDateTime(), date.getZone(), 12, null, Collections.emptySet());
+
+        Optional<Certificate> actual = certificateRepository.create(certificate);
+        assertEquals(Optional.of(expected), actual);
     }
 
     @Test
@@ -108,7 +115,7 @@ class CertificateRepositoryImplTest {
         Certificate certificate  = new Certificate(3, "New one", "Very good bikes",
                 BigDecimal.valueOf(12.99), date.toLocalDateTime(), date.getZone(),
                 date.toLocalDateTime(), date.getZone(), 12,
-                new HashSet<>(Collections.singletonList(new Tag(1, "velo", null))),
+                new HashSet<>(Collections.singletonList(new Tag(1, "velo"))),
                 null);
 
         assertEquals(Optional.of(certificate), certificateRepository.update(certificate));
@@ -116,7 +123,7 @@ class CertificateRepositoryImplTest {
 
     @Test
     void update_whenCertificateIsNull_thenNullPointerException() {
-        assertThrows(NullPointerException.class, ()-> certificateRepository.update(null));
+        assertThrows(InvalidDataAccessApiUsageException.class, ()-> certificateRepository.update(null));
     }
 
     @Test
