@@ -49,7 +49,6 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public Optional<Certificate> update(Certificate certificate) {
-        certificate.setTags(null);
         return Optional.ofNullable(
                entityManager.merge(certificate)
         );

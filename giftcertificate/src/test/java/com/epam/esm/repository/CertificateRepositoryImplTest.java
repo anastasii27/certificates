@@ -8,20 +8,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
 @SpringJUnitConfig(SpringConfig.class)
-@Sql("classpath:schema.sql")
 @EnableAutoConfiguration
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("test")
+@Transactional
 class CertificateRepositoryImplTest {
     private Pagination pagination;
     private List<Certificate> certificates;
@@ -77,16 +79,14 @@ class CertificateRepositoryImplTest {
     @Test
     void delete_whenCertificateDoesExists_thenDoNothing() {
         certificateRepository.delete(2);
-
+        assertIterableEquals(certificates, certificateRepository.findAll(pagination));
     }
 
     @Test
     void create_whenCertificateIsNotNull_thenReturnOptionalCertificate() {
+        Optional<Certificate> expected = Optional.of(certificate2);
         certificate1.setId(3);
-        certificate1.setTags(Collections.emptySet());
-
-        Optional<Certificate> expected = Optional.of(certificate1);
-        Optional<Certificate> actual = certificateRepository.create(certificate1);
+        Optional<Certificate> actual = certificateRepository.create(certificate2);
         assertEquals(expected, actual);
     }
 
@@ -104,20 +104,19 @@ class CertificateRepositoryImplTest {
     }
 
     @Test
-    void update_whenCertificateDoesNotExist_thenReturnEmptyOptional() {
-        certificate1.setId(3);
-        assertEquals(Optional.empty(), certificateRepository.update(certificate1));
+    void update_whenCertificateDoesNotExist_thenReturnNewCertificate() {
+        Certificate certificate  = new Certificate(3, "New one", "Very good bikes",
+                BigDecimal.valueOf(12.99), date.toLocalDateTime(), date.getZone(),
+                date.toLocalDateTime(), date.getZone(), 12,
+                new HashSet<>(Collections.singletonList(new Tag(1, "velo", null))),
+                null);
+
+        assertEquals(Optional.of(certificate), certificateRepository.update(certificate));
     }
 
     @Test
     void update_whenCertificateIsNull_thenNullPointerException() {
         assertThrows(NullPointerException.class, ()-> certificateRepository.update(null));
-    }
-
-    @Test
-    void getFilteredCertificates_whenMapIsEmpty_thenReturnAllCertificatesList(){
-        assertIterableEquals(certificates,
-                certificateRepository.getFilteredCertificates(Collections.emptyMap(), pagination));
     }
 
     @Test
@@ -127,28 +126,7 @@ class CertificateRepositoryImplTest {
     }
 
     @Test
-    void getFilteredCertificates_whenMapContainsIllegalFilterParams_thenIllegalArgumentException(){
-        Map<String, String> filteredParams = new HashMap<String, String>(){{
-            put("illegal", "illegal");
-        }};
-
-        assertThrows(IllegalArgumentException.class,
-                ()-> certificateRepository.getFilteredCertificates(filteredParams, pagination));
-    }
-
-    @Test
-    void getFilteredCertificates_whenMapContainsLegalFilterParams_thenReturnFilteredCertificatesList(){
-        Map<String, String> filteredParams = new HashMap<String, String>(){{
-            put("tag", "spa");
-        }};
-
-        assertIterableEquals(Collections.singletonList(certificate2),
-                             certificateRepository.getFilteredCertificates(filteredParams, pagination));
-    }
-
-    @Test
     void getCertificate_whenCertificateExists_thenOptionalCertificate(){
-        System.out.println(certificateRepository.getCertificate("Bike Certificate", "Very good bikes"));
        assertEquals(Optional.ofNullable(certificate1),
                certificateRepository.getCertificate(certificate1.getName(), certificate1.getDescription()));
     }

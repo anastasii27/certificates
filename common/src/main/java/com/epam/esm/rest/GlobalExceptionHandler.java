@@ -2,6 +2,7 @@ package com.epam.esm.rest;
 
 import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
+import com.epam.esm.exception.InvalidDataInputException;
 import com.epam.esm.model.Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -49,6 +50,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String errorMessage = messageSource.getMessage(exceptionMessage, null,  locale);
 
         return new Error(BAD_REQ_ERROR_CODE,errorMessage);
+    }
+
+    @ExceptionHandler(InvalidDataInputException.class)
+    public  ResponseEntity<Object>  handleInvalidDataInput(InvalidDataInputException e, Locale locale) {
+        List<String> errors = new ArrayList<>();
+
+        for (final FieldError error : e.getBindingResult().getFieldErrors()) {
+            String errorMessage = messageSource.getMessage(error.getCode(), null,  locale);
+            errors.add(error.getField() + SEPARATOR + errorMessage);
+        }
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @Override

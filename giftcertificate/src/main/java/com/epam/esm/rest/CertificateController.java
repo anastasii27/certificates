@@ -2,15 +2,18 @@ package com.epam.esm.rest;
 
 import com.epam.esm.dto.CertificateDto;
 import static com.epam.esm.model.FilterParam.TAG;
+import com.epam.esm.exception.InvalidDataInputException;
 import com.epam.esm.model.FilterParam;
 import com.epam.esm.model.Pagination;
 import com.epam.esm.service.CertificateService;
+import com.epam.esm.service.utils.UpdatedCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -28,6 +31,8 @@ public class CertificateController {
     }};
     @Autowired
     private CertificateService certificateService;
+    @Autowired
+    private UpdatedCertificateValidator updatedCertificateValidator;
 
     @GetMapping("/{id}")
     public EntityModel<CertificateDto> getCertificate(@PathVariable long id){
@@ -35,7 +40,7 @@ public class CertificateController {
 
         return EntityModel.of(certificate, linkTo(methodOn(CertificateController.class)
                 .getCertificate(id)).withSelfRel()
-                .andAffordance(afford(methodOn(CertificateController.class).updateCertificate(id, null)))
+                .andAffordance(afford(methodOn(CertificateController.class).updateCertificate(id, null, null)))
                 .andAffordance(afford(methodOn(CertificateController.class).deleteCertificate(id))));
 
     }
@@ -53,17 +58,25 @@ public class CertificateController {
 
         return EntityModel.of(createdCertificate, linkTo(methodOn(CertificateController.class)
                 .createCertificate(certificate)).withSelfRel()
+                .andAffordance(afford(methodOn(CertificateController.class).updateCertificate(createdCertificate.getId(),
+                        null, null)))
                 .andAffordance(afford(methodOn(CertificateController.class).deleteCertificate(
                         createdCertificate.getId()
                 ))));
     }
 
     @PatchMapping("/{id}")
-    public EntityModel<CertificateDto> updateCertificate(@PathVariable long id, @RequestBody CertificateDto certificate){
+    public EntityModel<CertificateDto> updateCertificate(@PathVariable long id,
+                                                         @RequestBody CertificateDto certificate,
+                                                         BindingResult bindingResult){
+        updatedCertificateValidator.validate(certificate, bindingResult);
+        if(bindingResult.hasErrors()){
+            throw new InvalidDataInputException(bindingResult);
+        }
         CertificateDto updatedCertificate = certificateService.update(certificate, id);
 
         return EntityModel.of(updatedCertificate, linkTo(methodOn(CertificateController.class)
-                .updateCertificate(id, certificate)).withSelfRel()
+                .updateCertificate(id, certificate, bindingResult)).withSelfRel()
                 .andAffordance(afford(methodOn(CertificateController.class).deleteCertificate(id))));
     }
 
