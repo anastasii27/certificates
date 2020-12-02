@@ -26,7 +26,14 @@ public class OrderListener {
     }
 
     private void insertIntoAuditTable(AuditAction action, Order order){
-        entityManager.persist(new OrderHistory(0, order.getId(), action,
-                order.getPurchaseDate(), order.getPurchaseTimeZone(), order.getCost(), order.getUserId()));
+        entityManager.persist(OrderHistory.builder()
+                .entityId(order.getId())
+                .operation(action)
+                .purchaseDate(order.getPurchaseDate())
+                .purchaseTimeZone(order.getPurchaseTimeZone())
+                .cost(order.getCost())
+                .userId(order.getUserId())
+                .build()
+        );
     }
 }

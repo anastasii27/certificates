@@ -1,12 +1,12 @@
-package com.epam.esm.security;
+package com.epam.esm.service.security;
 
 import com.epam.esm.model.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class UserSecurity {
     @Autowired
     private UserDetailsService userDetailsService;

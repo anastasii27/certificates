@@ -3,9 +3,7 @@ package com.epam.esm.audit.listener;
 import com.epam.esm.audit.AuditAction;
 import com.epam.esm.audit.entity.CertificateHistory;
 import com.epam.esm.model.Certificate;
-import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.*;
-
 import static com.epam.esm.audit.AuditAction.*;
 
 public class CertificateListener {
@@ -13,7 +11,6 @@ public class CertificateListener {
     private EntityManager entityManager;
 
     @PostPersist
-    @Transactional
     public void postPersist(Certificate certificate){
        insertIntoAuditTable(INSERT, certificate);
     }
@@ -29,8 +26,18 @@ public class CertificateListener {
     }
 
     private void insertIntoAuditTable(AuditAction action, Certificate certificate){
-        entityManager.persist(new CertificateHistory(0, certificate.getId(), action, certificate.getName(),
-                certificate.getDescription(), certificate.getPrice(), certificate.getCreateDate(), certificate.getCreateDateTimezone(),
-                certificate.getLastUpdateDate(), certificate.getLastUpdateDateTimezone(), certificate.getDuration()));
+        entityManager.persist(CertificateHistory.builder()
+                .entityId(certificate.getId())
+                .operation(action)
+                .name(certificate.getName())
+                .description(certificate.getDescription())
+                .price(certificate.getPrice())
+                .createDate(certificate.getCreateDate())
+                .createDateTimezone(certificate.getCreateDateTimezone())
+                .lastUpdateDate(certificate.getLastUpdateDate())
+                .lastUpdateDateTimezone(certificate.getLastUpdateDateTimezone())
+                .duration(certificate.getDuration())
+                .build()
+        );
     }
 }

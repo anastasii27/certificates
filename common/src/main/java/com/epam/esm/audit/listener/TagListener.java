@@ -26,6 +26,11 @@ public class TagListener {
     }
 
     private void insertIntoAuditTable(AuditAction action, Tag tag){
-        entityManager.persist(new TagHistory(0, tag.getId(), action, tag.getName()));
+        entityManager.persist(TagHistory.builder()
+                .entityId(tag.getId())
+                .operation(action)
+                .name(tag.getName())
+                .build()
+        );
     }
 }

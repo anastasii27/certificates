@@ -2,7 +2,7 @@ package com.epam.esm.security;
 
 import com.epam.esm.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,14 +32,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         Claims claims = null;
         String jwt = extractJwt(request);
 
-        if(!StringUtils.isEmpty(jwt)){
+        if(!isEmpty(jwt)){
             claims = jwtUtils.decodeJwt(jwt);
         }
 
         if (claims != null) {
             String username = claims.getSubject();
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(userDetails.getUsername(),
                             userDetails.getPassword(),

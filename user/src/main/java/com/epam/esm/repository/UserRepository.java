@@ -38,5 +38,12 @@ public interface UserRepository {
      *          if User does not exist.
      */
     Optional<User> findByLogin(String login);
+    /**
+     * This method is used to create a user in database.
+     *
+     * @param user the user to create.
+     * @return an Optional with the value of created User or empty Optional
+     *          if User was not created.
+     */
     Optional<User> create(User user);
 }

@@ -3,6 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.config.SpringConfig;
 import com.epam.esm.converter.UserConverter;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.model.Pagination;
 import com.epam.esm.model.Role;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.when;
 @SpringJUnitConfig(SpringConfig.class)
 @SpringBootTest
 @EnableAutoConfiguration
-class UserServiceImplTest {//todo fix
+class UserServiceImplTest {
     private static final String ILLEGAL_SEARCH_TYPE = "smth";
     private static final String CATEGORY = "user_orders_cost_max";
     @Mock
@@ -85,4 +86,10 @@ class UserServiceImplTest {//todo fix
     void findUserTags_whenSearchTypeIsIllegal_thenIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, ()-> userService.findUserTags(ILLEGAL_SEARCH_TYPE, CATEGORY));
     }
+
+//    @Test
+//    void create_whenUserIsAlreadyExist_thenEntityAlreadyExistException() {
+//        when(userRepository.findByLogin(userDto.getLogin())).thenReturn(Optional.of(user));
+//        assertThrows(EntityAlreadyExistsException.class, ()-> userService.create(userDto));
+//    }
 }

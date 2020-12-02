@@ -1,11 +1,10 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.EntityAlreadyExistsException;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.model.Pagination;
 import com.epam.esm.dto.UserTagDto;
-import com.epam.esm.model.User;
-
 import java.util.List;
 
 public interface UserService {
@@ -34,5 +33,13 @@ public interface UserService {
      * @return List of tags or empty List if no tags were found.
      */
     List<UserTagDto> findUserTags(String searchType, String category);
+    /**
+     * This method is used to create a user.
+     *
+     * @param user the user to create.
+     * @return an Optional with the value of created User or empty Optional
+     *          if User was not created.
+     * @throws EntityAlreadyExistsException if user is already exist.
+     */
     UserDto create(UserDto user);
 }

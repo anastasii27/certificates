@@ -87,7 +87,10 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public UserDto signUp(@RequestBody @Valid UserDto userDto){
-        return userService.create(userDto);
+    public UserDto signUp(@RequestBody @Valid UserDto user){
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        return userService.create(user);
     }
 }
