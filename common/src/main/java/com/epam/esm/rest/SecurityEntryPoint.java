@@ -19,7 +19,7 @@ import static org.springframework.web.servlet.support.RequestContextUtils.getLoc
 @Component
 public class SecurityEntryPoint implements AuthenticationEntryPoint {
     private static final int ERROR_CODE = 40100;
-    private static final String EXCEPTION_KEY = "exception.auth.not_authorized_1";
+    private static final String EXCEPTION_KEY = "exception.auth.not_authorized";
     @Autowired
     private ExceptionHandlerUtils exceptionHandlerUtils;
     @Autowired

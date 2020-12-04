@@ -33,6 +33,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto getUserOrder(long userId, long orderId) {
+        checkUserExistence(userId);
         Order order = orderRepository.getOrderInfo(userId, orderId)
                 .orElseThrow(()->
                         new EntityNotFoundException(ORDER_NOT_FOUND_EXCEPTION_KEY, orderId, ORDER_ERROR_CODE_NOT_FOUND));
@@ -42,9 +43,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> getUserOrders(long userId, Pagination pagination) {
-        if(!orderRepository.doesUserExist(userId)){
-            throw new EntityNotFoundException(USER_NOT_FOUND_EXCEPTION_KEY, userId, USER_ERROR_CODE_NOT_FOUND);
-        }
+        checkUserExistence(userId);
         return orderConverter.toDtoList(
                 orderRepository.getUserOrders(userId, pagination)
         );
@@ -53,9 +52,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderDto order(OrderCertificateDto orderCertificateDto, long userId) {
-        if(!orderRepository.doesUserExist(userId)){
-            throw new EntityNotFoundException(USER_NOT_FOUND_EXCEPTION_KEY, userId, USER_ERROR_CODE_NOT_FOUND);
-        }
+        checkUserExistence(userId);
         List<CertificateDto> certificates = orderCertificateDto.getOrderedCertificates();
 
         Order orderToCreate = orderCertificateDtoConverter.toEntity(orderCertificateDto);
@@ -67,6 +64,12 @@ public class OrderServiceImpl implements OrderService {
             return orderConverter.toDto(createdOrder.get());
         }else {
             return new OrderDto();
+        }
+    }
+
+    private void checkUserExistence(long userId){
+        if(!orderRepository.doesUserExist(userId)){
+            throw new EntityNotFoundException(USER_NOT_FOUND_EXCEPTION_KEY, userId, USER_ERROR_CODE_NOT_FOUND);
         }
     }
 }

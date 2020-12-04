@@ -18,4 +18,8 @@ public class Pagination {
     public int getLimit(){
         return limit==0? DEFAULT_LIMIT :limit;
     }
+
+    public int getOffset(){
+        return offset==0? offset :offset*10;
+    }
 }

@@ -53,7 +53,7 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         pagination = new Pagination(100, 0);
-        user = new User(1, "Nastya","login", "123", Role.USER, null);
+        user = new User(1, "Nastya","login", "12345", Role.USER, null);
         userDto = new UserDto(1, "Nastya", "login", "12345", Role.USER);
         usersList = Collections.singletonList(user);
         usersDtoList = Collections.singletonList(userDto);
@@ -87,9 +87,17 @@ class UserServiceImplTest {
         assertThrows(IllegalArgumentException.class, ()-> userService.findUserTags(ILLEGAL_SEARCH_TYPE, CATEGORY));
     }
 
-//    @Test
-//    void create_whenUserIsAlreadyExist_thenEntityAlreadyExistException() {
-//        when(userRepository.findByLogin(userDto.getLogin())).thenReturn(Optional.of(user));
-//        assertThrows(EntityAlreadyExistsException.class, ()-> userService.create(userDto));
-//    }
+    @Test
+    void create_whenUserIsAlreadyExist_thenEntityAlreadyExistException() {
+        when(userRepository.findByLogin(userDto.getLogin())).thenReturn(Optional.of(user));
+        assertThrows(EntityAlreadyExistsException.class, ()-> userService.create(userDto));
+    }
+
+    @Test
+    void create_whenUserDoesNotExist_thenReturnCreatedUser() {
+        when(userRepository.findByLogin(userDto.getLogin())).thenReturn(Optional.empty());
+        when(userRepository.create(user)).thenReturn(Optional.of(user));
+
+        assertEquals(userDto, userService.create(userDto));
+    }
 }
