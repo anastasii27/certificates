@@ -1,4 +1,4 @@
-package com.epam.esm.security;
+package com.epam.esm.filter;
 
 import com.epam.esm.utils.JwtUtils;
 import io.jsonwebtoken.Claims;

@@ -13,6 +13,6 @@ import javax.validation.constraints.Pattern;
 public class TagDto extends RepresentationModel<TagDto>{
     private long id;
     @NotBlank
-    @Pattern(regexp = "#[\\p{Ll}\\p{Lu}]+")
+    @Pattern(regexp = "[\\p{Ll}\\p{Lu}]+")
     private String name;
 }

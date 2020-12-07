@@ -1,5 +1,6 @@
-package com.epam.esm.security;
+package com.epam.esm.config;
 
+import com.epam.esm.filter.JwtAuthorizationFilter;
 import com.epam.esm.rest.DeniedAccessHandler;
 import com.epam.esm.rest.SecurityEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import static com.epam.esm.model.Role.ADMIN;
-import static com.epam.esm.model.Role.USER;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final String ADMIN = "ADMIN";
+    private static final String USER = "USER";
     @Autowired
     private JwtAuthorizationFilter jwtAuthorizationFilter;
     @Autowired
@@ -42,17 +43,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,
                         "/tags", "/tags/{\\d+}",
                         "/users/tags", "/users")
-                .hasAnyRole(ADMIN.name(), USER.name())
+                .hasAnyRole(ADMIN, USER)
                 .antMatchers(HttpMethod.GET,
                         "/users/{userId}/orders/{\\d+}",
                         "/users/{userId}/orders",
                         "/users/{userId}")
-                .access("@userSecurity.hasUserId(authentication, #userId) or hasRole('"+ADMIN.name()+"')")
+                .access("@userSecurity.hasUserId(authentication, #userId) or hasRole('"+ADMIN+"')")
                 .antMatchers(HttpMethod.POST, "/users/{userId}/orders")
-                .access("@userSecurity.hasUserId(authentication, #userId) or hasRole('"+ADMIN.name()+"')")
-                .antMatchers(HttpMethod.DELETE, "/certificates/{\\d+}", "/tags/{\\d+}").hasRole(ADMIN.name())
-                .antMatchers(HttpMethod.PATCH, "/certificates/{\\d+}").hasRole(ADMIN.name())
-                .antMatchers(HttpMethod.POST, "/certificates", "/tags").hasRole(ADMIN.name());
+                .access("@userSecurity.hasUserId(authentication, #userId) or hasRole('"+ADMIN+"')")
+                .antMatchers(HttpMethod.DELETE, "/certificates/{\\d+}", "/tags/{\\d+}").hasRole(ADMIN)
+                .antMatchers(HttpMethod.PATCH, "/certificates/{\\d+}").hasRole(ADMIN)
+                .antMatchers(HttpMethod.POST, "/certificates", "/tags").hasRole(ADMIN);
 
         http.exceptionHandling().authenticationEntryPoint(securityEntryPoint)
                 .and()

@@ -3,6 +3,7 @@ package com.epam.esm.utils;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import javax.xml.bind.DatatypeConverter;
@@ -10,14 +11,15 @@ import java.util.Date;
 
 @Component
 public class JwtUtils {
-    private static final String SECURITY_KEY = "VCSEDNVe1vsJqUjjj2C819e6DcVuZ8NZeuzaYlMSz51OJgWnWXnyjXMv7er3Z46";
+    @Value("${jwt.secret-key}")
+    private String securityKey;
     private Logger log =  LoggerFactory.getLogger(JwtUtils.class);
 
     public String generateJwt(UserDetails userDetails){
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
-                .signWith(SignatureAlgorithm.HS512, SECURITY_KEY)
+                .signWith(SignatureAlgorithm.HS512, securityKey)
                 .compact();
     }
 
@@ -25,7 +27,7 @@ public class JwtUtils {
         Claims claims = null;
         try {
             claims = Jwts.parser()
-                    .setSigningKey(DatatypeConverter.parseBase64Binary(SECURITY_KEY))
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(securityKey))
                     .parseClaimsJws(jwt).getBody();
         }catch (MalformedJwtException e){
             log.error("The token was constructed incorrectly");
