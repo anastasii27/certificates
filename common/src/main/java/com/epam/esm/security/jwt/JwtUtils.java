@@ -1,4 +1,4 @@
-package com.epam.esm.utils;
+package com.epam.esm.security.jwt;
 
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;

@@ -5,9 +5,10 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserTagDto;
 import com.epam.esm.model.JwtResponse;
 import com.epam.esm.model.Pagination;
+import com.epam.esm.model.Role;
 import com.epam.esm.model.UserDetailsImpl;
 import com.epam.esm.service.UserService;
-import com.epam.esm.utils.JwtUtils;
+import com.epam.esm.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -90,6 +91,7 @@ public class UserController {
     public UserDto signUp(@RequestBody @Valid UserDto user){
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
+        user.setRole(Role.USER);
 
         return userService.create(user);
     }

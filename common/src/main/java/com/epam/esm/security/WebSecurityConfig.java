@@ -1,8 +1,8 @@
-package com.epam.esm.config;
+package com.epam.esm.security;
 
-import com.epam.esm.filter.JwtAuthorizationFilter;
 import com.epam.esm.rest.DeniedAccessHandler;
 import com.epam.esm.rest.SecurityEntryPoint;
+import com.epam.esm.security.jwt.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

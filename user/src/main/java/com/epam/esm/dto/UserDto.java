@@ -23,6 +23,5 @@ public class UserDto extends RepresentationModel<UserDto> {
     @Length(min = 4, max = 15)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    @NotNull
     private Role role;
 }

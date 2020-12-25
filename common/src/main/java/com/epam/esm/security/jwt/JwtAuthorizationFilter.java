@@ -1,6 +1,5 @@
-package com.epam.esm.filter;
+package com.epam.esm.security.jwt;
 
-import com.epam.esm.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
