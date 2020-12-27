@@ -19,7 +19,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.math.BigDecimal;
@@ -41,12 +43,14 @@ class CertificateServiceImplTest {
     private CertificateRepository certificateRepository;
     @Mock
     private TagService tagService;
-    @SpyBean
-    private CertificateConverter certificateConverter;
     @Mock
     private UpdatedCertificate updatedCertificate;
+    @SpyBean
+    private CertificateConverter certificateConverter;
     @InjectMocks
     private CertificateService certificateService = new CertificateServiceImpl();
+    @MockBean
+    private UserDetailsService userDetailsService;
     private Pagination pagination;
     private ZonedDateTime date;
     private List<CertificateDto> dtoList;

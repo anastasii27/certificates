@@ -19,7 +19,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +44,8 @@ class UserServiceImplTest {
     private TagRepository tagRepository;
     @SpyBean
     private UserConverter userConverter;
+    @MockBean
+    private UserDetailsService userDetailsService;
     @InjectMocks
     private UserService userService = new UserServiceImpl();
     private User user;

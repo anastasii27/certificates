@@ -16,15 +16,16 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @SpringJUnitConfig(SpringConfig.class)
@@ -42,6 +43,8 @@ class TagServiceImplTest {
     private TagRepository tagRepository;
     @SpyBean
     private TagConverter tagConverter;
+    @MockBean
+    private UserDetailsService userDetailsService;
     @InjectMocks
     private TagService tagService = new TagServiceImpl();
 
@@ -112,7 +115,7 @@ class TagServiceImplTest {
 
     @Test
     void delete_whenTagExists_thenDoNothing() {
-        when(tagRepository.findById(9)).thenReturn(Optional.ofNullable(tagEntity2));
-        doNothing().when(tagRepository).delete(9);
+        lenient().when(tagRepository.findById(2)).thenReturn(Optional.of(tagEntity2));
+        lenient().doNothing().when(tagRepository).delete(2);
     }
 }

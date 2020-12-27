@@ -17,7 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @SpringJUnitConfig(SpringConfig.class)
@@ -42,6 +44,8 @@ class OrderServiceImplTest {
     private OrderCertificateDtoConverter orderCertificateDtoConverter;
     @SpyBean
     private CertificateConverter certificateConverter;
+    @MockBean
+    private UserDetailsService userDetailsService;
     @InjectMocks
     private OrderService orderService = new OrderServiceImpl();
     private Order order;
@@ -68,19 +72,23 @@ class OrderServiceImplTest {
 
     @Test
     void getUserOrder_whenUserDoesNotExist_thenEntityNotFoundException() {
-        when(orderRepository.getOrderInfo(1, 1)).thenReturn(Optional.empty());
+        lenient().when(orderRepository.doesUserExist(1)).thenReturn(false);
         assertThrows(EntityNotFoundException.class, ()-> orderService.getUserOrder(1,1));
     }
 
     @Test
     void getUserOrder_whenOrderDoesNotExist_thenEntityNotFoundException() {
-        when(orderRepository.getOrderInfo(1, 1)).thenReturn(Optional.empty());
+        lenient().when(orderRepository.doesUserExist(1)).thenReturn(true);
+        lenient().when(orderRepository.getOrderInfo(1, 1)).thenReturn(Optional.empty());
+
         assertThrows(EntityNotFoundException.class, ()-> orderService.getUserOrder(1,1));
     }
 
     @Test
     void getUserOrder_whenOrderExists_thenReturnOrder() {
+        when(orderRepository.doesUserExist(1)).thenReturn(true);
         when(orderRepository.getOrderInfo(1, 1)).thenReturn(Optional.ofNullable(order));
+
         assertEquals(orderDto, orderService.getUserOrder(1, 1));
     }
 

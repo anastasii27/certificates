@@ -21,7 +21,7 @@ public class TagServiceImpl implements TagService {
     private static final long ERROR_CODE_CONFLICT = 40901;
     private static final String NOT_FOUND_EXCEPTION_KEY = "exception.tag.not_found";
     private static final String CONFLICT_EXCEPTION_KEY = "exception.tag.conflict";
-    private static final int DEFAULT_LIMIT = 1000;
+    private static final int DEFAULT_LIMIT = 1500;
     private static final int DEFAULT_OFFSET = 0;
     @Autowired
     private TagRepository tagRepository;
