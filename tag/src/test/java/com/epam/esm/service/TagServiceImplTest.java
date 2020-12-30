@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
 @SpringJUnitConfig(SpringConfig.class)
 @SpringBootTest
 @EnableAutoConfiguration
+@TestPropertySource(locations = "classpath:application.properties")
 class TagServiceImplTest {
     private List<TagDto> dtoTags;
     private List<Tag> entityTags;

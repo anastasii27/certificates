@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
 @SpringJUnitConfig(SpringConfig.class)
 @SpringBootTest
 @EnableAutoConfiguration
+@TestPropertySource(locations = "classpath:application.properties")
 class UserServiceImplTest {
     private static final String ILLEGAL_SEARCH_TYPE = "smth";
     private static final String CATEGORY = "user_orders_cost_max";
